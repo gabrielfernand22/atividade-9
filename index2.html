@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineTube - Filmes Clássicos e Públicos</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8b5cf6', // Roxo
+                        accent: '#facc15',  // Amarelo
+                        darkbg: '#09090b',  // Preto fundo
+                        cardbg: '#18181b'   // Preto cartões
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkbg text-zinc-100 font-sans min-h-screen flex flex-col">
+
+    <!-- Top Navbar -->
+    <header class="fixed top-0 left-0 right-0 h-16 bg-darkbg/95 backdrop-blur border-b border-zinc-800 z-50 flex items-center justify-between px-4 md:px-6">
+        <div class="flex items-center gap-4">
+            <button id="menu-toggle" class="text-zinc-400 hover:text-accent p-2 rounded-lg transition">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center gap-2 cursor-pointer" onclick="navigateHome()">
+                <div class="bg-primary p-2 rounded-xl text-darkbg font-bold flex items-center justify-center shadow-lg shadow-primary/30">
+                    <i class="fa-solid fa-film text-xl"></i>
+                </div>
+                <span class="text-xl font-black tracking-wider text-white">CINE<span class="text-accent">TUBE</span></span>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="hidden md:flex items-center flex-1 max-w-xl mx-8">
+            <div class="flex w-full bg-zinc-900 border border-zinc-700 rounded-full overflow-hidden focus-within:border-primary">
+                <input type="text" id="search-input" placeholder="Pesquisar filmes clássicos..." class="w-full bg-transparent px-4 py-2 text-sm text-zinc-200 focus:outline-none">
+                <button onclick="handleSearch()" class="bg-zinc-800 px-5 text-zinc-400 hover:text-accent transition">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button onclick="toggleWatchLaterView()" class="flex items-center gap-2 bg-primary/20 border border-primary/40 text-primary hover:bg-primary hover:text-white px-3 py-1.5 rounded-lg text-sm font-semibold transition">
+                <i class="fa-solid fa-bookmark"></i>
+                <span class="hidden sm:inline">Assistir Depois</span>
+                <span id="watch-later-badge" class="bg-primary text-darkbg px-1.5 py-0.2 rounded-full text-xs font-bold">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex pt-16 flex-1">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-darkbg border-r border-zinc-800 fixed h-[calc(100vh-4rem)] z-40 transition-transform duration-300 flex flex-col p-4 overflow-y-auto">
+            <div class="space-y-1 mb-6">
+                <button onclick="navigateHome()" class="w-full flex items-center gap-4 px-3 py-2.5 rounded-xl text-sm font-medium bg-primary/20 text-primary transition">
+                    <i class="fa-solid fa-house w-5"></i> Início
+                </button>
+                <button onclick="filterByGenre('Todos')" class="w-full flex items-center gap-4 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white transition">
+                    <i class="fa-solid fa-fire w-5"></i> Todos os Filmes
+                </button>
+            </div>
+
+            <hr class="border-zinc-800 my-2">
+
+            <div class="py-2">
+                <h3 class="px-3 text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Gêneros</h3>
+                <div id="genre-filters" class="space-y-1">
+                    <!-- Gerado por JS -->
+                </div>
+            </div>
+
+            <hr class="border-zinc-800 my-2">
+
+            <div class="py-2">
+                <h3 class="px-3 text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Classificação</h3>
+                <div id="rating-filters" class="space-y-1">
+                    <!-- Gerado por JS -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main id="main-content" class="flex-1 ml-0 md:ml-64 p-6 transition-all duration-300">
+            
+            <!-- Vista Inicial: Lista de Filmes -->
+            <div id="home-view">
+                <!-- Filtros Rápidos (Tags) -->
+                <div class="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar" id="tag-filters">
+                    <!-- Gerado por JS -->
+                </div>
+
+                <!-- Grid de Vídeos -->
+                <h2 id="section-title" class="text-xl font-bold mb-4 text-white">Filmes em Destaque</h2>
+                <div id="movies-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Gerado por JS -->
+                </div>
+            </div>
+
+            <!-- Vista de Player / Detalhes -->
+            <div id="player-view" class="hidden max-w-6xl mx-auto space-y-6">
+                <button onclick="navigateHome()" class="flex items-center gap-2 text-zinc-400 hover:text-accent font-medium text-sm transition">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar para o catálogo
+                </button>
+
+<body>
+    <h1>videos do youtube</h1><hr>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/EMMN6YQU21o?si=5OjW-Bp5EaG4NcyQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+                
+                <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-zinc-800">
+                    <iframe id="movie-iframe" class="w-full h-full" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-cardbg p-6 rounded-2xl border border-zinc-800">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span id="player-genre" class="bg-primary/20 text-primary text-xs px-2.5 py-1 rounded-full font-bold"></span>
+                            <span id="player-rating" class="bg-accent/20 text-accent text-xs px-2.5 py-1 rounded-full font-bold"></span>
+                            <span id="player-year" class="text-zinc-400 text-sm"></span>
+                        </div>
+                        <h1 id="player-title" class="text-2xl font-bold text-white mb-2"></h1>
+                        <p id="player-description" class="text-zinc-300 text-sm leading-relaxed"></p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="btn-watch-later" onclick="toggleWatchLaterCurrent()" class="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition border border-zinc-700">
+                            <i class="fa-solid fa-bookmark"></i> <span id="watch-later-text">Assistir Depois</span>
+                        </button>
+                        <button onclick="shareMovie()" class="bg-zinc-800 hover:bg-zinc-700 text-white p-2.5 rounded-xl text-sm transition border border-zinc-700">
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Mock Data de Filmes Públicos do YouTube
+        const movies = [
+            {
+                id: 1,
+                title: "Night of the Living Dead (1968)",
+                genre: "Terror",
+                rating: "16",
+                year: "1968",
+                duration: "1h 36m",
+                description: "O clássico cult de George A. Romero que revolucionou o gênero de zumbis. Um grupo de pessoas se refugia em uma casa de fazenda enquanto mortos-vivos ressuscitam.",
+                videoId: "5GXmZJb_t3M",
+                thumbnail: "https://img.youtube.com/vi/5GXmZJb_t3M/hqdefault.jpg"
+            },
+            {
+                id: 2,
+                title: "His Girl Friday (1940)",
+                genre: "Comédia",
+                rating: "Livre",
+                year: "1940",
+                duration: "1h 32m",
+                description: "Comédia maluca clássica estrelada por Cary Grant e Rosalind Russell. Um editor de jornal tenta reconquistar sua ex-esposa e repórter estrela.",
+                videoId: "VOx09n9s55s",
+                thumbnail: "https://img.youtube.com/vi/VOx09n9s55s/hqdefault.jpg"
+            },
+            {
+                id: 3,
+                title: "Plan 9 from Outer Space (1959)",
+                genre: "Clássicos",
+                rating: "10",
+                year: "1959",
+                duration: "1h 19m",
+                description: "Considerado por muitos o filme mais divertido do pior diretor de todos os tempos, Edward D. Wood Jr. Aliens ressuscitam os mortos para impedir a destruição da Terra.",
+                videoId: "u6xubm0_a2g",
+                thumbnail: "https://img.youtube.com/vi/u6xubm0_a2g/hqdefault.jpg"
+            },
+            {
+                id: 4,
+                title: "A Trip to the Moon (1902)",
+                genre: "Clássicos",
+                rating: "Livre",
+                year: "1902",
+                duration: "14m",
+                description: "A obra-prima pioneira da ficção científica muda de Georges Méliès, mostrando astrônomos viajando à lua em uma cápsula disparada por um canhão.",
+                videoId: "Z1KAOGvTPts",
+                thumbnail: "https://img.youtube.com/vi/Z1KAOGvTPts/hqdefault.jpg"
+            },
+            {
+                id: 5,
+                title: "The Phantom of the Opera (1925)",
+                genre: "Terror",
+                rating: "12",
+                year: "1925",
+                duration: "1h 33m",
+                description: "Adaptação muda clássica estrelada por Lon Chaney como o fantasma mascarado que assombra a Ópera de Paris.",
+                videoId: "V-MvF93L49M",
+                thumbnail: "https://img.youtube.com/vi/V-MvF93L49M/hqdefault.jpg"
+            },
+            {
+                id: 6,
+                title: "The General (1926)",
+                genre: "Comédia",
+                rating: "Livre",
+                year: "1926",
+                duration: "1h 17m",
+                description: "Comédia de ação muda de Buster Keaton sobre um maquinista de trem na Guerra Civil Americana que tenta recuperar sua locomotiva roubada.",
+                videoId:"https:youtu.be/xRHbU6YRgZk?si=gr2G9Z41KXSHvBNd",
+                thumbnail: "https://img.youtube.com/vi/2X06wzPq_s0/hqdefault.jpg"
+            }
+        ];
+
+        const genres = ["Todos", "Ação", "Terror", "Comédia", "Clássicos", "Documentários"];
+        const ratings = ["Todos", "Livre", "10", "12", "14", "16", "18"];
+
+        let currentFilterGenre = "Todos";
+        let currentFilterRating = "Todos";
+        let activeMovieId = null;
+
+        // Inicialização
+        document.addEventListener("DOMContentLoaded", () => {
+            renderFilters();
+            renderMovies(movies);
+            updateWatchLaterBadge();
+
+            // Toggle sidebar
+            document.getElementById("menu-toggle").addEventListener("click", () => {
+                const sidebar = document.getElementById("sidebar");
+                sidebar.classList.toggle("-translate-x-full");
+            });
+
+            // Enter na busca
+            document.getElementById("search-input").addEventListener("keyup", (e) => {
+                if (e.key === "Enter") handleSearch();
+            });
+        });
+
+        function renderFilters() {
+            // Gêneros sidebar
+            const genreContainer = document.getElementById("genre-filters");
+            genreContainer.innerHTML = genres.map(g => `
+                <button onclick="filterByGenre('${g}')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-zinc-800 hover:text-white transition ${currentFilterGenre === g ? 'text-primary font-bold bg-primary/10' : ''}">
+                    ${g}
+                </button>
+            `).join("");
+
+            // Classificação sidebar
+            const ratingContainer = document.getElementById("rating-filters");
+            ratingContainer.innerHTML = ratings.map(r => `
+                <button onclick="filterByRating('${r}')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-zinc-400 hover:bg-zinc-800 hover:text-white transition ${currentFilterRating === r ? 'text-accent font-bold bg-accent/10' : ''}">
+                    Classificação: ${r}
+                </button>
+            `).join("");
+
+            // Tags horizontais rápidas
+            const tagContainer = document.getElementById("tag-filters");
+            tagContainer.innerHTML = genres.map(g => `
+                <button onclick="filterByGenre('${g}')" class="px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition border ${currentFilterGenre === g ? 'bg-primary border-primary text-darkbg font-bold' : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-600'}">
+                    ${g}
+                </button>
+            `).join("");
+        }
+
+        function renderMovies(movieList) {
+            const grid = document.getElementById("movies-grid");
+            if (movieList.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-zinc-500">Nenhum filme encontrado.</div>`;
+                return;
+            }
+
+            grid.innerHTML = movieList.map(movie => `
+                <div onclick="openPlayer(${movie.id})" class="bg-cardbg rounded-2xl overflow-hidden border border-zinc-800 hover:border-primary/50 group cursor-pointer transition duration-300 flex flex-col">
+                    <div class="relative aspect-video bg-zinc-900 overflow-hidden">
+                        <img src="${movie.thumbnail}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute bottom-2 right-2 bg-black/80 text-xs px-2 py-1 rounded font-mono text-zinc-200">
+                            ${movie.duration}
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <div>
+                            <div class="flex items-center justify-between text-xs text-zinc-400 mb-2">
+                                <span class="bg-primary/20 text-primary px-2 py-0.5 rounded font-bold">${movie.genre}</span>
+                                <span class="bg-zinc-800 px-2 py-0.5 rounded text-accent font-bold">${movie.rating}</span>
+                            </div>
+                            <h3 class="font-bold text-white group-hover:text-primary transition line-clamp-1">${movie.title}</h3>
+                        </div>
+                        <div class="text-xs text-zinc-500 mt-3 pt-3 border-t border-zinc-800 flex justify-between items-center">
+                            <span>Lançamento: ${movie.year}</span>
+                            <i class="fa-solid fa-play text-accent"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function filterByGenre(genre) {
+            currentFilterGenre = genre;
+            applyFilters();
+            navigateHome();
+        }
+
+        function filterByRating(rating) {
+            currentFilterRating = rating;
+            applyFilters();
+            navigateHome();
+        }
+
+        function applyFilters() {
+            let filtered = movies;
+            if (currentFilterGenre !== "Todos") {
+                filtered = filtered.filter(m => m.genre === currentFilterGenre);
+            }
+            if (currentFilterRating !== "Todos") {
+                filtered = filtered.filter(m => m.rating === currentFilterRating);
+            }
+            document.getElementById("section-title").innerText = currentFilterGenre === "Todos" ? "Filmes em Destaque" : `Gênero: ${currentFilterGenre}`;
+            renderFilters();
+            renderMovies(filtered);
+        }
+
+        function handleSearch() {
+            const query = document.getElementById("search-input").value.toLowerCase();
+            const filtered = movies.filter(m => m.title.toLowerCase().includes(query) || m.description.toLowerCase().includes(query));
+            document.getElementById("section-title").innerText = `Resultados para: "${query}"`;
+            renderMovies(filtered);
+            navigateHome();
+        }
+
+        function openPlayer(id) {
+            const movie = movies.find(m => m.id === id);
+            if (!movie) return;
+            activeMovieId = id;
+
+            document.getElementById("home-view").classList.add("hidden");
+            document.getElementById("player-view").classList.remove("hidden");
+
+            document.getElementById("movie-iframe").src = `https://www.youtube.com/embed/${movie.videoId}?autoplay=1`;
+            document.getElementById("player-title").innerText = movie.title;
+            document.getElementById("player-description").innerText = movie.description;
+            document.getElementById("player-genre").innerText = movie.genre;
+            document.getElementById("player-rating").innerText = `Classificação: ${movie.rating}`;
+            document.getElementById("player-year").innerText = `Ano: ${movie.year} • ${movie.duration}`;
+
+            updateWatchLaterButtonState();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function navigateHome() {
+            document.getElementById("player-view").classList.add("hidden");
+            document.getElementById("home-view").classList.remove("hidden");
+            document.getElementById("movie-iframe").src = ""; // Para o vídeo
+            activeMovieId = null;
+        }
+
+        // Funções de localStorage para Assistir Depois
+        function getWatchLater() {
+            return JSON.parse(localStorage.getItem("watch_later")) || [];
+        }
+
+        function toggleWatchLaterCurrent() {
+            if (!activeMovieId) return;
+            let list = getWatchLater();
+            if (list.includes(activeMovieId)) {
+                list = list.filter(id => id !== activeMovieId);
+            } else {
+                list.push(activeMovieId);
+            }
+            localStorage.setItem("watch_later", JSON.stringify(list));
+            updateWatchLaterBadge();
+            updateWatchLaterButtonState();
+        }
+
+        function updateWatchLaterButtonState() {
+            const list = getWatchLater();
+            const btnText = document.getElementById("watch-later-text");
+            if (list.includes(activeMovieId)) {
+                btnText.innerText = "Salvo";
+            } else {
+                btnText.innerText = "Assistir Depois";
+            }
+        }
+
+        function updateWatchLaterBadge() {
+            const list = getWatchLater();
+            document.getElementById("watch-later-badge").innerText = list.length;
+        }
+
+        function toggleWatchLaterView() {
+            const list = getWatchLater();
+            const savedMovies = movies.filter(m => list.includes(m.id));
+            document.getElementById("section-title").innerText = "Sua Lista: Assistir Depois";
+            renderMovies(savedMovies);
+            navigateHome();
+        }
+
+        function shareMovie() {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Link copiado para a área de transferência!");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpotiTune - Ouça suas músicas favoritas</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8b5cf6', // Roxo
+                        accent: '#facc15',  // Amarelo
+                        darkbg: '#09090b',  // Preto fundo
+                        cardbg: '#18181b'   // Preto cartões
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkbg text-zinc-100 font-sans min-h-screen flex flex-col pb-24">
+
+    <!-- Top Navbar -->
+    <header class="fixed top-0 left-0 right-0 h-16 bg-darkbg/95 backdrop-blur border-b border-zinc-800 z-50 flex items-center justify-between px-4 md:px-6">
+        <div class="flex items-center gap-3">
+            <div class="bg-primary p-2 rounded-xl text-darkbg font-bold flex items-center justify-center shadow-lg shadow-primary/30">
+                <i class="fa-solid fa-music text-lg"></i>
+            </div>
+            <span class="text-xl font-black tracking-wider text-white">SPOTI<span class="text-accent">TUNE</span></span>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+            <div class="flex w-full bg-zinc-900 border border-zinc-700 rounded-full overflow-hidden focus-within:border-primary">
+                <input type="text" id="search-input" placeholder="O que você quer ouvir?" class="w-full bg-transparent px-4 py-2 text-sm text-zinc-200 focus:outline-none">
+                <button onclick="handleSearch()" class="bg-zinc-800 px-4 text-zinc-400 hover:text-accent transition">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-semibold bg-primary/20 text-primary px-3 py-1.5 rounded-full border border-primary/30">Premium Grátis</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex pt-16 flex-1">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-darkbg border-r border-zinc-800 fixed h-[calc(100vh-8rem)] z-40 hidden md:flex flex-col p-4 space-y-4">
+            <nav class="space-y-1">
+                <a href="#" class="flex items-center gap-4 px-3 py-2.5 rounded-xl text-sm font-medium bg-primary/20 text-primary transition">
+                    <i class="fa-solid fa-house w-5"></i> Início
+                </a>
+                <a href="#" class="flex items-center gap-4 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white transition">
+                    <i class="fa-solid fa-compass w-5"></i> Explorar
+                </a>
+                <a href="#" class="flex items-center gap-4 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white transition">
+                    <i class="fa-solid fa-heart w-5"></i> Favoritas
+                </a>
+            </nav>
+            <hr class="border-zinc-800">
+            <div class="flex-1 overflow-y-auto space-y-2">
+                <h3 class="text-xs font-bold text-zinc-500 uppercase tracking-wider px-3">Suas Playlists</h3>
+                <a href="#" class="block px-3 py-1.5 text-sm text-zinc-400 hover:text-white truncate">🚀 Clássicos do Rock</a>
+                <a href="#" class="block px-3 py-1.5 text-sm text-zinc-400 hover:text-white truncate">☕ Jazz & Café</a>
+                <a href="#" class="block px-3 py-1.5 text-sm text-zinc-400 hover:text-white truncate">🎹 Piano Relaxante</a>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="flex-1 ml-0 md:ml-64 p-6 overflow-y-auto">
+            <!-- Banner de Destaque -->
+            <div class="relative bg-gradient-to-r from-primary/30 via-zinc-900 to-zinc-900 border border-primary/30 rounded-3xl p-8 mb-8 overflow-hidden">
+                <div class="relative z-10 max-w-xl">
+                    <span class="bg-accent text-darkbg text-xs font-black uppercase px-2.5 py-1 rounded-md tracking-wider">Destaque da Semana</span>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-white mt-3 mb-2">Sons da Liberdade & Clássicos</h1>
+                    <p class="text-zinc-300 text-sm mb-6">Explore faixas e trilhas sonoras públicas selecionadas para embalar o seu dia com alta qualidade.</p>
+                    <button onclick="playTrack(0)" class="bg-accent hover:bg-yellow-400 text-darkbg font-bold px-6 py-3 rounded-full text-sm flex items-center gap-2 shadow-lg shadow-accent/20 transition">
+                        <i class="fa-solid fa-play"></i> Ouvir Agora
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seção de Músicas -->
+            <h2 id="section-title" class="text-xl font-bold mb-4 text-white">Músicas Populares</h2>
+            <div id="tracks-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Gerado por JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Bottom Audio Player Bar -->
+    <div class="fixed bottom-0 left-0 right-0 h-20 bg-darkbg/95 backdrop-blur border-t border-zinc-800 z-50 flex items-center justify-between px-4 md:px-6">
+        <!-- Track Info -->
+        <div class="flex items-center gap-3 w-1/4">
+            <img id="player-thumb" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100&auto=format&fit=crop" alt="Capa" class="w-12 h-12 rounded-lg object-cover">
+            <div class="truncate">
+                <h4 id="player-title" class="text-sm font-bold text-white truncate">Selecione uma música</h4>
+                <p id="player-artist" class="text-xs text-zinc-400 truncate">SpotiTune</p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-col items-center w-2/4 max-w-md">
+            <div class="flex items-center gap-6 mb-1">
+                <button class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-shuffle"></i></button>
+                <button class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-backward-step"></i></button>
+                <button id="play-pause-btn" onclick="togglePlay()" class="bg-primary hover:bg-purple-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition">
+                    <i class="fa-solid fa-play" id="play-icon"></i>
+                </button>
+                <button class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-forward-step"></i></button>
+                <button class="text-zinc-400 hover:text-white transition"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            <div class="w-full flex items-center gap-2 text-xs text-zinc-500">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" max="100" class="w-full h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-primary">
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+
+        <!-- Volume / Extras -->
+        <div class="hidden md:flex items-center justify-end gap-3 w-1/4 text-zinc-400">
+            <i class="fa-solid fa-volume-high"></i>
+            <input type="range" id="volume-bar" min="0" max="1" step="0.05" value="1" onchange="setVolume(this.value)" class="w-20 h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-primary">
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audio-element"></audio>
+
+    <!-- JavaScript -->
+    <script>
+        const tracks = [
+            {
+                id: 1,
+                title: "Nocturne in E-flat major",
+                artist: "Frédéric Chopin",
+                album: "Classical Piano Masterpieces",
+                duration: "3:42",
+                audioUrl: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Chopin_Nocturne_Op_9_No_2_falon.ogg",
+                thumbnail: "https://images.unsplash.com/photo-1520523839892-50d3329f6356?w=300&auto=format&fit=crop"
+            },
+            {
+                id: 2,
+                title: "Ragtime Dance",
+                artist: "Scott Joplin",
+                album: "Ragtime Classics",
+                duration: "2:15",
+                audioUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Scott_Joplin_-_The_Ragtime_Dance_%28piano_roll%29.ogg",
+                thumbnail: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&auto=format&fit=crop"
+            },
+            {
+                id: 3,
+                title: "The Four Seasons - Winter",
+                artist: "Antonio Vivaldi",
+                album: "Baroque Collection",
+                duration: "3:10",
+                audioUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Vivaldi_Winter_mvt_1_allegro_non_molto_Spivakov.ogg",
+                thumbnail: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=300&auto=format&fit=crop"
+            },
+            {
+                id: 4,
+                title: "Gymnopédie No. 1",
+                artist: "Erik Satie",
+                album: "Ambient Piano",
+                duration: "3:02",
+                audioUrl: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Erik_Satie_-_Gymnop%C3%A9die_No._1.ogg",
+                thumbnail: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=300&auto=format&fit=crop"
+            }
+        ];
+
+        let currentTrackIndex = null;
+        const audioElement = document.getElementById("audio-element");
+        const playIcon = document.getElementById("play-icon");
+        const progressBar = document.getElementById("progress-bar");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderTracks(tracks);
+
+            audioElement.addEventListener("timeupdate", () => {
+                if (audioElement.duration) {
+                    const progress = (audioElement.currentTime / audioElement.duration) * 100;
+                    progressBar.value = progress;
+                    document.getElementById("current-time").innerText = formatTime(audioElement.currentTime);
+                    document.getElementById("duration").innerText = formatTime(audioElement.duration);
+                }
+            });
+
+            progressBar.addEventListener("input", (e) => {
+                if (audioElement.duration) {
+                    audioElement.currentTime = (e.target.value / 100) * audioElement.duration;
+                }
+            });
+        });
+
+        function renderTracks(list) {
+            const grid = document.getElementById("tracks-grid");
+            grid.innerHTML = list.map((track, index) => `
+                <div onclick="playTrack(${index})" class="bg-cardbg p-4 rounded-2xl border border-zinc-800 hover:border-primary/50 group cursor-pointer transition flex flex-col justify-between">
+                    <div class="relative aspect-square rounded-xl overflow-hidden bg-zinc-900 mb-4">
+                        <img src="${track.thumbnail}" alt="${track.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute bottom-2 right-2 bg-primary text-darkbg w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition duration-300">
+                            <i class="fa-solid fa-play text-sm"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-sm group-hover:text-primary transition truncate">${track.title}</h3>
+                        <p class="text-xs text-zinc-400 truncate mt-1">${track.artist}</p>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function playTrack(index) {
+            currentTrackIndex = index;
+            const track = tracks[index];
+
+            audioElement.src = track.audioUrl;
+            audioElement.play();
+
+            document.getElementById("player-title").innerText = track.title;
+            document.getElementById("player-artist").innerText = track.artist;
+            document.getElementById("player-thumb").src = track.thumbnail;
+
+            playIcon.classList.remove("fa-play");
+            playIcon.classList.add("fa-pause");
+        }
+
+        function togglePlay() {
+            if (currentTrackIndex === null) {
+                playTrack(0);
+                return;
+            }
+
+            if (audioElement.paused) {
+                audioElement.play();
+                playIcon.classList.remove("fa-play");
+                playIcon.classList.add("fa-pause");
+            } else {
+                audioElement.pause();
+                playIcon.classList.remove("fa-pause");
+                playIcon.classList.add("fa-play");
+            }
+        }
+
+        function setVolume(value) {
+            audioElement.volume = value;
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        function handleSearch() {
+            const query = document.getElementById("search-input").value.toLowerCase();
+            const filtered = tracks.filter(t => t.title.toLowerCase().includes(query) || t.artist.toLowerCase().includes(query));
+            renderTracks(filtered);
+        }
+    </script>
+</body>
+</html>
